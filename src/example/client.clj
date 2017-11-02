@@ -56,3 +56,14 @@
   [{:keys [host content-type]}]
   (map->ServiceClient {:host host
                        :content-type content-type}))
+
+
+(-> @(http/get "http://localhost:8001/api/greetings" {:throw-exceptions false})
+    (:body)
+    (io/reader)
+    (json/read :key-fn keyword))
+
+(-> @(http/get "http://localhost:8001/api/greetings?name=mike" {:throw-exceptions false})
+    (:body)
+    (io/reader)
+    (json/read :key-fn keyword))
