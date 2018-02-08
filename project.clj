@@ -11,7 +11,6 @@
                  [com.stuartsierra/component "0.3.2"]
 
                  ;; Utility
-                 [environ "1.1.0"]
                  [com.taoensso/timbre "4.10.0"]
                  [metosin/spec-tools "0.5.1"]
 
