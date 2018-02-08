@@ -17,7 +17,7 @@
 (defn -main
   [& [port]]
   (log/set-level! :debug)
-  (let [port (Integer. (or port (env :port) 5000))]
+  (let [port (Integer. (or port (env :port.http) 5000))]
     (log/info (str "Using port " port "."))
     (let [system (system/system (merge config {:service/port port}))]
       (log/info "Starting system.")
