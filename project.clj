@@ -32,6 +32,6 @@
                    :target-path "target/dev"
                    :dependencies [[org.clojure/test.check "0.10.0-alpha2"]
                                   [org.clojure/tools.namespace "0.2.11"]]}
-             :production {:aot :all
-                          :main example.main
-                          :uberjar-name "example.jar"}})
+             :uberjar {:aot :all
+                       :main example.main
+                       :uberjar-name "example.jar"}})
