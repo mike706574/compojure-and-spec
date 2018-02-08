@@ -17,7 +17,7 @@
 
                  ;; Web
                  [aleph "0.4.4"]
-                 [ring/ring-anti-forgery "1.1.0"]
+                 [ring/ring-anti-forgery "1.2.0"]
                  [ring-cors "0.1.11"]
                  [ring/ring-defaults "0.3.1"]
                  [metosin/compojure-api "2.0.0-alpha18"]
