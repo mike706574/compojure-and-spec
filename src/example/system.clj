@@ -1,5 +1,6 @@
 (ns example.system
-  (:require [example.authentication :as auth]
+  (:require [example.animals :as animals]
+            [example.authentication :as auth]
             [example.users :as users]
             [example.handler :as handler]
             [example.service :as service]
@@ -19,13 +20,13 @@
 (s/def :service/id string?)
 (s/def :service/port integer?)
 (s/def :service/log-path string?)
-(s/def :service/user-manager-type #{:atomic})
 (s/def :service/users (s/map-of :service/username :service/password))
 
 (s/def :service/config (s/keys :req [:service/id
                                      :service/port
                                      :service/log-path
-                                     :service/user-manager-type]
+                                     ::users/manager-type
+                                     ::animals/repo-type]
                                :opt [:service/users]))
 
 (defn ^:private build
@@ -34,6 +35,7 @@
   (configure-logging! config)
   {:authenticator (auth/authenticator config)
    :user-manager (users/user-manager config)
+   :animal-repo (animals/repo config)
    :handler-factory (handler/factory config)
    :app (service/aleph-service config)})
 

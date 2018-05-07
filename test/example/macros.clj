@@ -14,5 +14,6 @@
   `(let [~'response ~call
          ~'status (:status ~'response)
          ~'body (:body ~'response)
+         ~'headers (:headers ~'response)
          ~'text (util/pretty ~'response)]
      ~@body))

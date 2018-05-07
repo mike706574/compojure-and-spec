@@ -9,13 +9,15 @@
    [clojure.reflect :refer [reflect]]
    [clojure.repl :refer [apropos dir doc find-doc pst source]]
    [clojure.set :as set]
+   [clojure.spec.alpha :as s]
+   [clojure.spec.gen.alpha :as gen]
+   [clojure.spec.test.alpha :as stest]
    [clojure.string :as str]
    [clojure.test :as test]
    [clojure.tools.namespace.repl :refer [refresh refresh-all]]
    [clojure.walk :as walk]
+
    [com.stuartsierra.component :as component]
-   [clojure.spec.alpha :as s]
-   [clojure.spec.test.alpha :as stest]
 
    [aleph.http :as http]
    [taoensso.timbre :as log]
@@ -32,9 +34,11 @@
 
 (def config {:service/id "example-server"
              :service/port port
+             :service/base-url (str "http://localhost:" port)
              :service/log-path "/tmp"
              :service/secret-key "secret"
-             :service/user-manager-type :atomic
+             :example.animals/repo-type "atomic"
+             :example.users/manager-type "atomic"
              :service/users {"mike" "rocket"}})
 
 (defonce system nil)
@@ -84,3 +88,20 @@
   []
   (stop)
   (go))
+
+  (def client (client/client {:host "localhost:8001"}))
+
+(comment
+
+  @(client/animals client)
+  @(client/animals client "ele")
+  @(client/add-animal client {:name "elephant"
+                             :legs 4
+                             :size "huge"})
+
+
+
+
+
+
+  )

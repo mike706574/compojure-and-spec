@@ -15,22 +15,51 @@
 (def config {:service/id "example-server"
              :service/port port
              :service/log-path "/tmp"
-             :service/user-manager-type :atomic
+             :example.users/manager-type "atomic"
+             :example.animals/repo-type "atomic"
              :service/users {"mike" "rocket"}})
+
+(deftest animals
+  (with-system (system/system config)
+    (let [client (-> {:host (str "localhost:" port)}
+                     (client/client))]
+      (unpack-response @(client/animals client)
+        (is (= 200 status))
+        (is (= {:status "ok" :animals []} body)))
+      (unpack-response @(client/animals client "do")
+        (is (= 200 status))
+        (is (= {:status "ok" :animals []} body)))
+      (unpack-response @(client/add-animal client {:name "elephant"
+                                                   :legs 4
+                                                   :size "huge"})
+        (is (= 201 status))
+        (is (= {:status "added"
+                :animal {:name "elephant",
+                         :size "huge",
+                         :legs 4
+                         :id "1"}}
+               body)))
+      (unpack-response @(client/animals client)
+        (is (= 200 status))
+        (is (= {:status "ok"
+                :animals [{:name "elephant",
+                           :size "huge",
+                           :legs 4
+                           :id "1"}]}
+               body)))
+      )))
 
 (deftest greeting
   (with-system (system/system config)
-    (let [client (-> {:host (str "localhost:" port)
-                      :content-type "application/json"}
+    (let [client (-> {:host (str "localhost:" port)}
                      (client/client))]
-      (unpack-response (client/greeting client "mike")
+      (unpack-response @(client/greeting client "mike")
         (is (= 200 status))
         (is (= {:greeting "Hello, mike!"} body))))))
 
 (deftest authenticates-successfully
   (with-system (system/system config)
-    (let [client (-> {:host (str "localhost:" port)
-                      :content-type "application/json"}
+    (let [client (-> {:host (str "localhost:" port)}
                      (client/client)
                      (client/authenticate {:username "mike"
                                            :password "rocket"}))
@@ -39,8 +68,7 @@
 
 (deftest fails-to-authenticate
   (with-system (system/system config)
-    (let [client (-> {:host (str "localhost:" port)
-                      :content-type "application/json"}
+    (let [client (-> {:host (str "localhost:" port)}
                      (client/client)
                      (client/authenticate {:username "mike"
                                            :password "kablam"}))

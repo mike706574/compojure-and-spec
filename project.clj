@@ -6,20 +6,21 @@
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/spec.alpha "0.1.143"]
-                 [org.clojure/core.cache "0.6.5"]
+                 [org.clojure/core.cache "0.7.1"]
                  [org.clojure/data.json "0.2.6"]
                  [com.stuartsierra/component "0.3.2"]
 
                  ;; Utility
                  [com.taoensso/timbre "4.10.0"]
-                 [metosin/spec-tools "0.5.1"]
+                 [metosin/spec-tools "0.6.1"]
 
                  ;; Web
                  [aleph "0.4.4"]
+                 [manifold "0.1.6"]
                  [ring/ring-anti-forgery "1.2.0"]
-                 [ring-cors "0.1.11"]
+                 [ring-cors "0.1.12"]
                  [ring/ring-defaults "0.3.1"]
-                 [metosin/compojure-api "2.0.0-alpha18"]
+                 [metosin/compojure-api "2.0.0-alpha19"]
                  [metosin/ring-http-response "0.9.0"]
 
                  ;; Security

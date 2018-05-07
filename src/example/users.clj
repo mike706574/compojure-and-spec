@@ -18,7 +18,7 @@
                :credentials :service/credentials)
   :ret :service/credentials)
 
-(defmulti user-manager :service/user-manager-type)
+(defmulti user-manager ::manager-type)
 
 (defn ^:private find-by-username
   [users username]
@@ -37,7 +37,7 @@
       (when (hashers/check password (:password user))
         (dissoc user :password)))))
 
-(defmethod user-manager :atomic
+(defmethod user-manager "atomic"
   [config]
   (let [user-manager (AtomicUserManager. (atom 0) (atom {}))]
     (when-let [users (:service/users config)]
@@ -47,6 +47,9 @@
     user-manager))
 
 (defmethod user-manager :default
-  [{user-manager-type :service/user-manager-type}]
-  (throw (ex-info (str "Invalid user manager type: " (name user-manager-type))
-                  {:user-manager-type user-manager-type})))
+  [{type ::manager-type :as config}]
+  (println config)
+  (throw (ex-info (str "Invalid user manager type: " type)
+                  {:user-manager-type type})))
+
+(s/def ::manager-type #{"atomic"})

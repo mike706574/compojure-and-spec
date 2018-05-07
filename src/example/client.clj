@@ -1,9 +1,10 @@
 (ns example.client
   (:require [aleph.http :as http]
-            [example.users :as users]
             [clojure.data.json :as json]
             [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [manifold.deferred :as d]
+            [example.users :as users]))
 
 (defn parse
   [response]
@@ -37,7 +38,9 @@
 
 (defprotocol Client
   (authenticate [this credentials])
-  (greeting [this name]))
+  (greeting [this name])
+  (animals [this] [this name])
+  (add-animal [this animal]))
 
 (defrecord ServiceClient [host token]
   Client
@@ -46,24 +49,33 @@
       (assoc this :token token)))
 
   (greeting [this name]
-   (parse @(http/get (str (http-url host) (str "/api/greetings"))
-                     {:headers {"Content-Type" "application/json"
-                                "Accept" "application/json"}
-                      :query-params {"name" name}
-                      :throw-exceptions false}))))
+    (d/chain (http/get (str (http-url host) "/api/greetings")
+                       {:headers {"Accept" "application/json"}
+                        :query-params {"name" name}
+                        :throw-exceptions false})
+             parse))
+
+  (animals [this]
+    (d/chain (http/get (str (http-url host) "/api/animals")
+                       {:headers {"Accept" "application/json"}
+                        :throw-exceptions false})
+             parse))
+
+  (animals [this name]
+    (d/chain @(http/get (str (http-url host) "/api/animals")
+                        {:headers {"Accept" "application/json"}
+                         :query-params {"name" name}
+                         :throw-exceptions false})
+             parse))
+
+  (add-animal [this animal]
+    (d/chain @(http/post (str (http-url host) "/api/animals")
+                         {:headers {"Content-Type" "application/json"
+                                    "Accept" "application/json"}
+                          :body (json/write-str animal)
+                          :throw-exceptions false})
+             parse)))
 
 (defn client
-  [{:keys [host content-type]}]
-  (map->ServiceClient {:host host
-                       :content-type content-type}))
-
-(comment
-  (-> @(http/get "http://localhost:8001/api/greetings" {:throw-exceptions false})
-      (:body)
-      (io/reader)
-      (json/read :key-fn keyword))
-
-  (-> @(http/get "http://localhost:8001/api/greetings?name=mike" {:throw-exceptions false})
-      (:body)
-      (io/reader)
-      (json/read :key-fn keyword)))
+  [{:keys [host]}]
+  (map->ServiceClient {:host host}))
