@@ -39,7 +39,7 @@
              :service/secret-key "secret"
              :example.animals/repo-type "atomic"
              :example.users/manager-type "atomic"
-             :service/users {"mike" "rocket"}})
+             :example.users/users {"mike" "rocket"}})
 
 (defonce system nil)
 
@@ -89,19 +89,16 @@
   (stop)
   (go))
 
-  (def client (client/client {:host "localhost:8001"}))
+
 
 (comment
-
+  (def client (-> (client/client {:host "localhost:8001"})
+                  (client/authenticate {:username "mike"
+                                        :password "rocket"})))
+  @(client/greeting client "mike")
   @(client/animals client)
   @(client/animals client "ele")
   @(client/add-animal client {:name "elephant"
-                             :legs 4
-                             :size "huge"})
-
-
-
-
-
-
+                              :legs 4
+                              :size "huge"})
   )

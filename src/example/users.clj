@@ -2,21 +2,22 @@
   (:require [buddy.hashers :as hashers]
             [clojure.spec.alpha :as s]))
 
-(s/def :service/username string?)
-(s/def :service/password string?)
-(s/def :service/credentials (s/keys :req-un [:service/username :service/password]))
+(s/def ::username string?)
+(s/def ::password string?)
+(s/def ::token string?)
+(s/def ::credentials (s/keys :req-un [::username ::password]))
 
 (defprotocol UserManager
   "Abstraction around user storage and authentication."
   (add! [this user] "Adds a user.")
   (authenticate [this credentials] "Authenticates a user."))
 
-(s/def :service/user-manager (partial satisfies? UserManager))
+(s/def ::manager (partial satisfies? UserManager))
 
 (s/fdef add!
-  :args (s/cat :user-manager :service/user-manager
-               :credentials :service/credentials)
-  :ret :service/credentials)
+  :args (s/cat :user-manager ::manager
+               :credentials ::credentials)
+  :ret ::credentials)
 
 (defmulti user-manager ::manager-type)
 
@@ -40,7 +41,7 @@
 (defmethod user-manager "atomic"
   [config]
   (let [user-manager (AtomicUserManager. (atom 0) (atom {}))]
-    (when-let [users (:service/users config)]
+    (when-let [users (::users config)]
       (doseq [[username password] users]
         (add! user-manager {:username username
                             :password password})))

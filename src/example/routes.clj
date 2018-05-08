@@ -11,13 +11,6 @@
 (s/def ::name string?)
 (s/def ::greeting string?)
 
-(s/def ::username string?)
-(s/def ::password string?)
-(s/def ::credentials (s/keys :req-un [::username
-                                      ::password]))
-
-(s/def ::token string?)
-
 (s/def ::status #{"ok" "added" "deleted" "error"})
 
 (s/def ::animal-response (s/keys :req-un [::status ::animals/animal]))
@@ -32,10 +25,16 @@
     (f response)))
 
 (defn routes [{:keys [authenticator user-manager animal-repo base-url]}]
-  (let [animal-url (str base-url "/api/animals")]
+  (let [animal-url (str base-url "/api/animals")
+        authentication-handler (fn [handler]
+                                 (fn [request]
+                                   (if (auth/authenticated? authenticator request)
+                                     (handler request)
+                                     {:status 401})))]
     (compojure/context "/api" []
       (compojure/context "/greetings" []
         :tags ["greetings"]
+        :middleware [authentication-handler]
         (compojure/resource
          {:get
           {:summary "retrieving friendly greetings"
@@ -77,8 +76,8 @@
         (compojure/resource
          {:post
           {:summary "creating tokens"
-           :parameters {:body-params ::credentials}
-           :responses {201 {:schema (s/keys :req-un [::token])}
+           :parameters {:body-params ::users/credentials}
+           :responses {201 {:schema (s/keys :req-un [::users/token])}
                        401 {:schema nil?}}
            :handler (fn [{credentials :body-params}]
                       (log/info (str "Creating token for " (:username credentials) "."))

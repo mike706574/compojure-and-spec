@@ -50,7 +50,8 @@
 
   (greeting [this name]
     (d/chain (http/get (str (http-url host) "/api/greetings")
-                       {:headers {"Accept" "application/json"}
+                       {:headers {"Accept" "application/json"
+                                  "Authorization" (str "Bearer " token)}
                         :query-params {"name" name}
                         :throw-exceptions false})
              parse))
