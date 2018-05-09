@@ -13,7 +13,7 @@
 
 (s/def ::animal (s/merge ::animal-template
                          (s/keys :req-un [::id])))
-(s/def ::animals (s/coll-of ::entry))
+(s/def ::animals (s/coll-of ::animal))
 
 (defprotocol AnimalRepo
   "Stores information about animals."

@@ -20,14 +20,15 @@
 (s/def :service/id string?)
 (s/def :service/port integer?)
 (s/def :service/log-path string?)
-(s/def :service/users (s/map-of :service/username :service/password))
+(s/def :service/users (s/map-of :example.users/username
+                                :example.users/password))
 
 (s/def :service/config (s/keys :req [:service/id
                                      :service/port
                                      :service/log-path
                                      ::users/manager-type
                                      ::animals/repo-type]
-                               :opt [:service/users]))
+                               :opt [::users/users]))
 
 (defn ^:private build
   [config]

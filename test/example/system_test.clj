@@ -17,7 +17,7 @@
              :service/log-path "/tmp"
              :example.users/manager-type "atomic"
              :example.animals/repo-type "atomic"
-             :service/users {"mike" "rocket"}})
+             :example.users/users {"mike" "rocket"}})
 
 (deftest animals
   (with-system (system/system config)
@@ -52,7 +52,9 @@
 (deftest greeting
   (with-system (system/system config)
     (let [client (-> {:host (str "localhost:" port)}
-                     (client/client))]
+                     (client/client)
+                     (client/authenticate {:username "mike"
+                                           :password "rocket"}))]
       (unpack-response @(client/greeting client "mike")
         (is (= 200 status))
         (is (= {:greeting "Hello, mike!"} body))))))
