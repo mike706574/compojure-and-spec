@@ -49,7 +49,6 @@
 
 (defmethod user-manager :default
   [{type ::manager-type :as config}]
-  (println config)
   (throw (ex-info (str "Invalid user manager type: " type)
                   {:user-manager-type type})))
 

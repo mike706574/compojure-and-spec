@@ -9,11 +9,9 @@
 (defrecord AtomicAnimalRepo [counter animals]
   AnimalRepo
   (animals [this]
-    (println "animals" @animals)
     {:status "ok" :animals (or (vals @animals) [])})
 
   (animals [this term]
-    (println "animals by name" @animals term)
     {:status "ok" :animals (search-map @animals :name term)})
 
   (add-animal [this animal]
