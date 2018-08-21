@@ -15,8 +15,8 @@
                  [metosin/spec-tools "0.7.1"]
 
                  ;; Web
-                 [aleph "0.4.4"]
-                 [manifold "0.1.6"]
+                 [aleph "0.4.6"]
+                 [manifold "0.1.8"]
                  [ring/ring-anti-forgery "1.3.0"]
                  [ring-cors "0.1.12"]
                  [ring/ring-defaults "0.3.2"]
